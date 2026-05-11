@@ -49,7 +49,9 @@ export default function IndexScreen() {
     setResultado(null);
   };
 
-  const analizarHoja = () => {
+  const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+  const analizarHoja = async () => {
     if (!imagen) {
       Alert.alert(
         "Imagen requerida",
@@ -61,13 +63,29 @@ export default function IndexScreen() {
     setCargando(true);
     setResultado(null);
 
-    setTimeout(() => {
-      const resultadoSimulado: Resultado =
-        Math.random() > 0.5 ? "sana" : "enferma";
+    try {
+      const formData = new FormData();
+      formData.append("file", {
+        uri: imagen,
+        name: "hoja.jpg",
+        type: "image/jpeg",
+      } as any);
 
-      setResultado(resultadoSimulado);
+      const response = await fetch(`${API_URL}/predict`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("Error del servidor");
+
+      const data = await response.json();
+      setResultado(data.prediction === "healthy" ? "sana" : "enferma");
+
+    } catch (error) {
+      Alert.alert("Error", "No se pudo conectar con el servidor. Verifica que el backend esté corriendo.");
+    } finally {
       setCargando(false);
-    }, 1200);
+    }
   };
 
   return (
