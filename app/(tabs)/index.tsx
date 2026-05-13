@@ -80,9 +80,11 @@ export default function IndexScreen() {
 
       const data = await response.json();
       setResultado(data.prediction === "healthy" ? "sana" : "enferma");
-
     } catch (error) {
-      Alert.alert("Error", "No se pudo conectar con el servidor. Verifica que el backend esté corriendo.");
+      Alert.alert(
+        "Error",
+        "No se pudo conectar con el servidor. Verifica que el backend esté corriendo.",
+      );
     } finally {
       setCargando(false);
     }
@@ -91,8 +93,6 @@ export default function IndexScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.icono}>🌿</Text>
-
         <Text style={styles.titulo}>Diagnóstico de hoja</Text>
 
         <Text style={styles.descripcion}>
